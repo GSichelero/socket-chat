@@ -12,7 +12,8 @@ server_connection.connect(ADDR)
 
 user_name = input("Qual o seu nome? ")
 
-while True:
+connect = True
+while connect:
     sockets_list = [sys.stdin, server_connection]
     read_sockets, write_socket, error_socket = select.select(sockets_list, [], [])
  
@@ -30,3 +31,6 @@ while True:
             print(f'{current_time} Você: {message}')
             server_message_full_information = f'{user_name}::{current_time}::{message}'
             server_connection.send(server_message_full_information.encode('utf-8'))
+            if message == '!Desconectar':
+                connect = False
+                break
