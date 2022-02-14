@@ -31,6 +31,8 @@ def send_message_to_all_other_clients(message, connection):
 def handle_client(conn, addr):
     print(f"Usuário {addr} conectou!", flush = True)
     conn.send("Bem-vindo a sala de chat!".encode('utf-8'))
+    ip_address = str(addr).split("'")[1]
+    port_address = str(str(addr).split(", ")[1])[:-1]
     connected = True
     while connected:
         message = conn.recv(4096).decode("utf-8")
@@ -45,15 +47,13 @@ def handle_client(conn, addr):
             message_sent_time = message.split("::")[1]
             connected = False
             cancel_clients_connection(conn)
-            final_message = f'Usuário {user_name} se desconectou em {message_sent_time}!'
+            final_message = f'Usuário {user_name} (IP:{ip_address} Port:{port_address}) se desconectou em {message_sent_time}!'
         else:
             user_name = message.split("::")[0]
             message_sent_time = message.split("::")[1]
             message_text = message.split("::")[2]
-            final_message = f'{user_name}: {message_text}\nEnviada as: {message_sent_time}'
-        ip_address = str(addr).split("'")[1]
-        port_address = str(str(addr).split(", ")[1])[:-1]
-        print(f'IP:{ip_address} Port:{port_address} Username:{final_message}', flush = True)
+            final_message = f'{user_name}: {message_text}\nEnviada do local: [IP:{ip_address} Port:{port_address}] as: {message_sent_time}'
+        print(final_message, flush = True)
         send_message_to_all_other_clients(final_message, conn)
 
 
